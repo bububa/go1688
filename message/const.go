@@ -1,0 +1,20 @@
+package message
+
+type MessageType = string
+
+const (
+	ORDER_BUYER_VIEW_PART_PART_SENDGOODS         MessageType = "ORDER_BUYER_VIEW_PART_PART_SENDGOODS"         // 1688订单部分发货（买家视角）/Partial delivery of 1688 order (buyer view)
+	ORDER_BUYER_VIEW_ANNOUNCE_SENDGOODS          MessageType = "ORDER_BUYER_VIEW_ANNOUNCE_SENDGOODS"          // 1688订单发货（买家视角）/1688 order delivery (buyer view)
+	ORDER_BUYER_VIEW_ORDER_COMFIRM_RECEIVEGOODS  MessageType = "ORDER_BUYER_VIEW_ORDER_COMFIRM_RECEIVEGOODS"  // 1688订单确认收货（买家视角）/order receipt confirmation (buyer view)
+	ORDER_BUYER_VIEW_ORDER_SUCCESS               MessageType = "ORDER_BUYER_VIEW_ORDER_SUCCESS"               // 1688交易成功（买家视角）
+	ORDER_BUYER_VIEW_ORDER_BUYER_CLOSE           MessageType = "ORDER_BUYER_VIEW_ORDER_BUYER_CLOSE"           // 1688买家关闭订单（买家视角）/buyer closing order (buyer view)
+	ORDER_BUYER_VIEW_ORDER_BUYER_REFUND_IN_SALES MessageType = "ORDER_BUYER_VIEW_ORDER_BUYER_REFUND_IN_SALES" //1688订单售中退款（买家视角）
+	ORDER_BUYER_VIEW_ORDER_REFUND_AFTER_SALES    MessageType = "ORDER_BUYER_VIEW_ORDER_REFUND_AFTER_SALES"    // 1688订单售后退款（买家视角）
+	PRODUCT_RELATION_VIEW_PRODUCT_DELETE         MessageType = "PRODUCT_RELATION_VIEW_PRODUCT_DELETE"         // 1688产品删除（关系用户视角）
+	PRODUCT_RELATION_VIEW_PRODUCT_EXPIRE         MessageType = "PRODUCT_RELATION_VIEW_PRODUCT_EXPIRE"         // 1688产品下架（关系用户视角）
+	PRODUCT_RELATION_VIEW_PRODUCT_NEW_OR_MODIFY  MessageType = "PRODUCT_RELATION_VIEW_PRODUCT_NEW_OR_MODIFY"  // 1688产品新增或修改（关系用户视角）
+	PRODUCT_RELATION_VIEW_PRODUCT_REPOST         MessageType = "PRODUCT_RELATION_VIEW_PRODUCT_REPOST"         // 1688产品上架（关系用户视角）
+	PRODUCT_PRODUCT_INVENTORY_CHANGE             MessageType = "PRODUCT_PRODUCT_INVENTORY_CHANGE"             // 1688商品库存变更消息
+	PRODUCT_RELATION_VIEW_EXIT_SUPERBUYER        MessageType = "PRODUCT_RELATION_VIEW_EXIT_SUPERBUYER"        // 商品池&超买价变更消息
+	PRODUCT_RELATION_VIEW_PRODUCT_AUDIT          MessageType = "PRODUCT_RELATION_VIEW_PRODUCT_AUDIT"          // 1688产品审核下架（关系用户视角）
+)
