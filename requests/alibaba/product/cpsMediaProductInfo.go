@@ -49,23 +49,6 @@ type ProductInfo struct {
 	Status             ProductStatus      `json:"status,omitempty"`             // 商品状态。published:上网状态;member expired:会员撤销;auto expired:自然过期;expired:过期(包含手动过期与自动过期);member deleted:会员删除;modified:修改;new:新发;deleted:删除;TBD:to be delete;approved:审批通过;auditing:审核中;untread:审核不通过;
 }
 
-type ProductStatus = string
-
-const (
-	PRODUCT_PUBLISHED      ProductStatus = "published"      // 上网状态
-	PRODUCT_MEMBER_EXPIRED ProductStatus = "member expired" // 会员撤销
-	PRODUCT_AUTO_EXPIRED   ProductStatus = "auto expired"   // 自然过期
-	PRODUCT_EXPIRED        ProductStatus = "expired"        // 过期(包含手动过期与自动过期)
-	PRODUCT_MEMBER_DELETED ProductStatus = "member deleted" // 会员删除
-	PRODUCT_MODIFIED       ProductStatus = "modified"       // 修改
-	PRODUCT_NEW            ProductStatus = "new"            // 新发
-	PRODUCT_DELETED        ProductStatus = "deleted"        // 删除
-	PRODUCT_TBD            ProductStatus = "TBD"            // to be delete
-	PRODUCT_APPROVED       ProductStatus = "approved"       // 审批通过
-	PRODUCT_AUDITING       ProductStatus = "auditing"       // 审核中
-	PRODUCT_UNTREAD        ProductStatus = "untread"        // 审核不通过
-)
-
 type ProductAttribute struct {
 	Id       uint64 `json:"attributeID,omitempty"`   // 属性ID
 	Value    string `json:"value,omitempty"`         // 值内容

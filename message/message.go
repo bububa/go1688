@@ -8,8 +8,8 @@ import (
 )
 
 type PushMessage struct {
-	Message string `json:"message"`        //对接方获取这个参数的值，然后通过json的反序列化，就得到了消息模型
-	Sign    string `json:"_aop_signature"` // 针对消息的一个签名，可防篡改
+	Message string `form:"message" json:"message" binding:"required"`               //对接方获取这个参数的值，然后通过json的反序列化，就得到了消息模型
+	Sign    string `form:"_aop_signature" json:"_aop_signature" binding:"required"` // 针对消息的一个签名，可防篡改
 }
 
 func (this *PushMessage) Valid(clt *go1688.Client) bool {
