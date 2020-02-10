@@ -59,7 +59,7 @@ type CreateOrder4CybMediaResponse struct {
 
 type CreateOrder4CybMediaResult struct {
 	TotalSuccessAmount uint   `json:"totalSuccessAmount,omitempty"` // 下单成功的订单总金额，单位：分
-	OrderId            uint64 `jsong:"orderId,omitempty"`           // 下单成功后的订单id
+	OrderId            string `jsong:"orderId,omitempty"`           // 下单成功后的订单id
 	PostFee            uint   `json:"postFee,omitempty"`            // 原始运费，单位：分。注意：下单后卖家可能调整，因此该值可能不等于最终支付运费
 }
 
