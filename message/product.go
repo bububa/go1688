@@ -15,7 +15,7 @@ type OfferInventoryChangeList struct {
 	SkuId       uint64 `json:"skuId,omitempty"`     // 商品skuId
 	SkuOnSale   uint   `json:"skuOnSale,omitempty"` // 在线可售sku数量
 	Quantity    int    `json:"quantity,omitempty"`  // 该offer整体库存变化数
-	bizTime     string `json:"bizTime,omitempty"`   // 库存变更时间
+	BizTime     string `json:"bizTime,omitempty"`   // 库存变更时间
 }
 
 type Product struct {
