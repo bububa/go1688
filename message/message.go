@@ -21,26 +21,26 @@ type Message interface {
 }
 
 type MessageTemplate struct {
-	Id        uint64      `json:"msgId"`     // 消息ID，消息唯一性标识
-	GmtBorn   int64       `json:"gmtBorn"`   // 消息推送时间
-	Data      string      `json:"data"`      // 具体推送的业务消息数据，json格式，字段说明，参考各个业务消息说明
-	UserInfo  string      `json:"userInfo"`  // memberId
-	Type      MessageType `json:"type"`      // 消息类型，每个业务消息都唯一对应一个类型，参考业务消息的类型定义
-	ExtraInfo string      `json:"extraInfo"` // 扩展字段，暂未启用
+	Id        uint64          `json:"msgId"`     // 消息ID，消息唯一性标识
+	GmtBorn   int64           `json:"gmtBorn"`   // 消息推送时间
+	Data      json.RawMessage `json:"data"`      // 具体推送的业务消息数据，json格式，字段说明，参考各个业务消息说明
+	UserInfo  string          `json:"userInfo"`  // memberId
+	Type      MessageType     `json:"type"`      // 消息类型，每个业务消息都唯一对应一个类型，参考业务消息的类型定义
+	ExtraInfo string          `json:"extraInfo"` // 扩展字段，暂未启用
 }
 
 func (this *MessageTemplate) Message() (Message, error) {
 	var orderMsg OrderMessage
 	for _, msgType := range orderMsg.Types() {
 		if msgType == this.Type {
-			err := json.Unmarshal([]byte(this.Data), &orderMsg)
+			err := json.Unmarshal(this.Data, &orderMsg)
 			return &orderMsg, err
 		}
 	}
 	var productMsg ProductMessage
 	for _, msgType := range productMsg.Types() {
 		if msgType == this.Type {
-			err := json.Unmarshal([]byte(this.Data), &productMsg)
+			err := json.Unmarshal(this.Data, &productMsg)
 			return &productMsg, err
 		}
 	}
