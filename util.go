@@ -36,7 +36,11 @@ func structToMap(data interface{}) map[string]string {
 		}
 		name := relField.Name
 		if tagName := relField.Tag.Get("json"); tagName != "" {
-			name = tagName
+			if strings.HasSuffix(tagName, ",omitempty") {
+				name = strings.TrimSuffix(tagName, ",omitempty")
+			} else {
+				name = tagName
+			}
 		}
 		m[name] = val
 	}
