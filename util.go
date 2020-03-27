@@ -3,6 +3,7 @@ package go1688
 import (
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 func structToMap(data interface{}) map[string]string {
