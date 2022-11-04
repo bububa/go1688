@@ -1,30 +1,40 @@
 package go1688
 
-import (
-	"fmt"
-)
-
 type Response interface {
 	Error() string
 	IsError() bool
 }
 
 type BaseResponse struct {
-	ErrorCode      string `json:"error_code,omitempty"`
-	ErrorMessage   string `json:"error_message,omitempty"`
-	RequestId      string `json:"request_id,omitempty"`
-	Success        bool   `json:"success,omitempty"`
-	InnerErrorCode string `json:"errorCode,omitempty"`
-	InnerErrorMsg  string `json:"errorMsg,omitempty"`
+	ErrorCode       string `json:"error_code,omitempty"`
+	ErrorMessage    string `json:"error_message,omitempty"`
+	RequestId       string `json:"request_id,omitempty"`
+	Success         bool   `json:"success,omitempty"`
+	InnerErrorCode  string `json:"errorCode,omitempty"`
+	InnerErrorMsg   string `json:"errorMsg,omitempty"`
+	ExtErrorMessage string `json:"extErrorMessage,omitempty"`
 }
 
-func (this BaseResponse) Error() string {
-	if this.InnerErrorCode != "" {
-		return fmt.Sprintf("CODE: %s, MSG: %s", this.InnerErrorCode, this.InnerErrorMsg)
+func (r BaseResponse) Error() string {
+	builder := GetStringsBuilder()
+	defer PutStringsBuilder(builder)
+	builder.WriteString("CODE: ")
+	if r.InnerErrorCode != "" {
+		builder.WriteString(r.InnerErrorCode)
+		builder.WriteString(", MSG: ")
+		builder.WriteString(r.InnerErrorMsg)
+	} else {
+		builder.WriteString(r.ErrorCode)
+		builder.WriteString(", MSG: ")
+		builder.WriteString(r.ErrorMessage)
 	}
-	return fmt.Sprintf("CODE: %s, MSG: %s", this.ErrorCode, this.ErrorMessage)
+	if r.ExtErrorMessage != "" {
+		builder.WriteString(", EXT: ")
+		builder.WriteString(r.ExtErrorMessage)
+	}
+	return builder.String()
 }
 
-func (this *BaseResponse) IsError() bool {
-	return this.ErrorCode != "" || this.InnerErrorCode != ""
+func (r BaseResponse) IsError() bool {
+	return r.ErrorCode != "" || r.InnerErrorCode != ""
 }

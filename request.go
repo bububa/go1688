@@ -1,9 +1,5 @@
 package go1688
 
-import (
-	"fmt"
-)
-
 type Request interface {
 	Namespace() string
 	Name() string
@@ -25,36 +21,44 @@ func NewBaseRequest(namespace string, name string) BaseRequest {
 	}
 }
 
-func (this *BaseRequest) SetVersion(version string) {
-	this.version = version
+func (r *BaseRequest) SetVersion(version string) {
+	r.version = version
 }
 
-func (this *BaseRequest) Name() string {
-	return this.name
+func (r *BaseRequest) Name() string {
+	return r.name
 }
 
-func (this *BaseRequest) Namespace() string {
-	return this.namespace
+func (r *BaseRequest) Namespace() string {
+	return r.namespace
 }
 
-func (this *BaseRequest) Version() string {
-	if this.version == "" {
+func (r *BaseRequest) Version() string {
+	if r.version == "" {
 		return VERSION
 	}
-	return this.version
+	return r.version
 }
 
-func (this *BaseRequest) Path() string {
-	return fmt.Sprintf("%s/%s/%s", this.Version(), this.Namespace(), this.Name())
+func (r *BaseRequest) Path() string {
+	builder := GetStringsBuilder()
+	defer PutStringsBuilder(builder)
+	builder.WriteString(r.Version())
+	builder.WriteString("/")
+	builder.WriteString(r.Namespace())
+	builder.WriteString("/")
+	builder.WriteString(r.Name())
+	return builder.String()
 }
 
 type RequestData interface {
 	Name() string
+	Map() map[string]string
 }
 
 type FinalRequest struct {
 	BaseRequest
-	data interface{}
+	data RequestData
 }
 
 func NewRequest(namespace string, data RequestData) *FinalRequest {
@@ -64,6 +68,6 @@ func NewRequest(namespace string, data RequestData) *FinalRequest {
 	}
 }
 
-func (this *FinalRequest) Params() map[string]string {
-	return structToMap(this.data)
+func (r *FinalRequest) Params() map[string]string {
+	return r.data.Map()
 }

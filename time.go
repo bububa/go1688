@@ -1,7 +1,6 @@
 package go1688
 
 import (
-	"fmt"
 	"strings"
 	"time"
 )
@@ -11,8 +10,17 @@ const JSONTIME_FORMAT = "20060102150405.000Z0700"
 type JsonTime time.Time
 
 func (t JsonTime) MarshalJSON() ([]byte, error) {
+	builder := GetBytesBuffer()
+	defer PutBytesBuffer(builder)
+	builder.WriteString(`"`)
+	builder.WriteString(t.Format())
+	builder.WriteString(`"`)
+	return builder.Bytes(), nil
+}
+
+func (t JsonTime) Format() string {
 	formated := time.Time(t).Format(JSONTIME_FORMAT)
-	return []byte(fmt.Sprintf(`"%s"`, strings.Replace(formated, ".", "", -1))), nil
+	return strings.Replace(formated, ".", "", -1)
 }
 
 func (t *JsonTime) UnmarshalJSON(s []byte) (err error) {
@@ -20,14 +28,15 @@ func (t *JsonTime) UnmarshalJSON(s []byte) (err error) {
 		t = nil
 		return
 	}
-	var buf []byte
+	buf := GetBytesBuffer()
+	defer PutBytesBuffer(buf)
 	for idx, c := range s {
 		if idx == 15 {
-			buf = append(buf, '.')
+			buf.WriteByte('.')
 		}
-		buf = append(buf, c)
+		buf.WriteByte(c)
 	}
-	parsed, err := time.Parse(`"`+JSONTIME_FORMAT+`"`, string(buf))
+	parsed, err := time.Parse(`"`+JSONTIME_FORMAT+`"`, buf.String())
 	if err != nil {
 		return err
 	}

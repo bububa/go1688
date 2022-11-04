@@ -1,75 +1,95 @@
 package trade
 
 import (
-	"encoding/json"
-	"errors"
+	"strconv"
 
 	"github.com/bububa/go1688"
 )
 
+// GetRefundReasonListRequest 查询退款退货原因（用于创建退款退货） API Request
 type GetRefundReasonListRequest struct {
-	OrderId       uint64            `json:"orderId,omitempty"`       // 主订单
-	OrderEntryIds []uint64          `json:"orderEntryIds,omitempty"` // 子订单
-	GoodsStatus   RefundGoodsStatus `json:"goodsStatus,omitempty"`   // 货物状态, 售中等待卖家发货:"refundWaitSellerSend"; 售中等待买家收货:"refundWaitBuyerReceive"; 售中已收货（未确认完成交易）:"refundBuyerReceived" 售后未收货:"aftersaleBuyerNotReceived"; 售后已收到货:"aftersaleBuyerReceived"
+	// OrderID 主订单
+	OrderID uint64 `json:"orderId,omitempty"`
+	// OrderEntryIDs 子订单
+	OrderEntryIDs []uint64 `json:"orderEntryIds,omitempty"`
+	// GoodsStatus 货物状态, 售中等待卖家发货:"refundWaitSellerSend"; 售中等待买家收货:"refundWaitBuyerReceive"; 售中已收货（未确认完成交易）:"refundBuyerReceived" 售后未收货:"aftersaleBuyerNotReceived"; 售后已收到货:"aftersaleBuyerReceived"
+	GoodsStatus RefundGoodsStatus `json:"goodsStatus,omitempty"`
 }
 
-type GetRefundReasonListRefinedRequest struct {
-	OrderId       uint64            `json:"orderId,omitempty"`       // 主订单
-	OrderEntryIds string            `json:"orderEntryIds,omitempty"` // 子订单
-	GoodsStatus   RefundGoodsStatus `json:"goodsStatus,omitempty"`   // 货物状态, 售中等待卖家发货:"refundWaitSellerSend"; 售中等待买家收货:"refundWaitBuyerReceive"; 售中已收货（未确认完成交易）:"refundBuyerReceived" 售后未收货:"aftersaleBuyerNotReceived"; 售后已收到货:"aftersaleBuyerReceived"
-}
-
-func (this *GetRefundReasonListRequest) Refine() *GetRefundReasonListRefinedRequest {
-	var entryIds []byte
-	if len(this.OrderEntryIds) > 0 {
-		entryIds, _ = json.Marshal(this.OrderEntryIds)
-	}
-
-	return &GetRefundReasonListRefinedRequest{
-		OrderId:       this.OrderId,
-		OrderEntryIds: string(entryIds),
-		GoodsStatus:   this.GoodsStatus,
-	}
-}
-
-func (this *GetRefundReasonListRefinedRequest) Name() string {
+// Name implement RequestData interface
+func (r GetRefundReasonListRequest) Name() string {
 	return "alibaba.trade.getRefundReasonList"
 }
 
+// Map implement RequestData interface
+func (r GetRefundReasonListRequest) Map() map[string]string {
+	return map[string]string{
+		"orderId":       strconv.FormatUint(r.OrderID, 10),
+		"orderEntryIDs": go1688.JSONMarshal(r.OrderEntryIDs),
+		"goodsStatus":   r.GoodsStatus,
+	}
+}
+
+// GetRefundReasonListResponse 查询退款退货原因（用于创建退款退货） API Response
 type GetRefundReasonListResponse struct {
 	go1688.BaseResponse
 	Result *GetRefundReasonListResult `json:"result,omitempty"`
 }
 
+// GetRefundReasonListResult 查询退款退货原因（用于创建退款退货） API Result
 type GetRefundReasonListResult struct {
-	Code    string `json:"code"`    // 错误码
-	Message string `json:"message"` // 错误信息
-	Result  struct {
-		Reasons []OrderRefundReason `json:"reasons,omitempty"` // 原因列表
-	} `json:"result,omitempty"` // 结果
+	// Code 错误码
+	Code string `json:"code"`
+	// Message 错误信息
+	Message string `json:"message"`
+	// Result 结果
+	Result struct {
+		// Reasons 原因列表
+		Reasons []OrderRefundReason `json:"reasons,omitempty"`
+	} `json:"result,omitempty"`
+	// Success 是否成功
+	Success bool `json:"success,omitempty"`
 }
 
+// IsError check success
+func (r GetRefundReasonListResult) IsError() bool {
+	return !r.Success
+}
+
+// Error implement error interface
+func (r GetRefundReasonListResult) Error() string {
+	builder := go1688.GetStringsBuilder()
+	defer go1688.PutStringsBuilder(builder)
+	builder.WriteString("CODE: ")
+	builder.WriteString(r.Code)
+	builder.WriteString(", MSG: ")
+	builder.WriteString(r.Message)
+	return builder.String()
+}
+
+// OrderRefundReason 退款原因
 type OrderRefundReason struct {
-	Id               uint64 `json:"id,omitempty"`               // 原因id
-	Name             string `json:"name,omitempty"`             // 原因
-	NeedVoucher      bool   `json:"needVoucher,omitempty"`      // 凭证是否必须上传
-	NoRefundCarriage bool   `json:"noRefundCarriage,omitempty"` // 是否支持退运费
-	Tip              string `json:"tip,omitempty"`              // 提示
+	// ID 原因id
+	ID uint64 `json:"id,omitempty"`
+	// Name 原因
+	Name string `json:"name,omitempty"`
+	// NeedVoucher 凭证是否必须上传
+	NeedVoucher bool `json:"needVoucher,omitempty"`
+	// NoRefundCarriage 是否支持退运费
+	NoRefundCarriage bool `json:"noRefundCarriage,omitempty"`
+	// Tip 提示
+	Tip string `json:"tip,omitempty"`
 }
 
+// GetRefundReasonList 查询退款退货原因（用于创建退款退货）
 func GetRefundReasonList(client *go1688.Client, req *GetRefundReasonListRequest, accessToken string) ([]OrderRefundReason, error) {
-	refinedReq := req.Refine()
-	finalRequest := go1688.NewRequest(NAMESPACE, refinedReq)
-	resp := &GetRefundReasonListResponse{}
-	err := client.Do(finalRequest, accessToken, resp)
-	if err != nil {
+	finalRequest := go1688.NewRequest(NAMESPACE, req)
+	var resp GetRefundReasonListResponse
+	if err := client.Do(finalRequest, accessToken, &resp); err != nil {
 		return nil, err
 	}
-	if resp.IsError() {
-		return nil, resp
-	}
-	if resp.Result.Code != "" {
-		return nil, errors.New(resp.Result.Message)
+	if resp.Result.IsError() {
+		return nil, resp.Result
 	}
 	return resp.Result.Result.Reasons, nil
 }

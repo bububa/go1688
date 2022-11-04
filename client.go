@@ -1,7 +1,6 @@
 package go1688
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"sort"
@@ -19,12 +18,14 @@ const (
 	VERSION  = "1"
 )
 
+// Client api client
 type Client struct {
 	http.Client
 	appKey string
 	secret []byte
 }
 
+// NewClient create a new Client instance
 func NewClient(appKey string, secret string, httpClient *http.Client) *Client {
 	client := httpClient
 	if httpClient == nil {
@@ -37,6 +38,7 @@ func NewClient(appKey string, secret string, httpClient *http.Client) *Client {
 	}
 }
 
+// Do execute api request
 func (c *Client) Do(req Request, accessToken string, resp Response) error {
 	reqPath := c.requestPath(req)
 	reqParams := req.Params()
@@ -49,13 +51,16 @@ func (c *Client) Do(req Request, accessToken string, resp Response) error {
 	for k, v := range reqParams {
 		values.Add(k, v)
 	}
-	requestUri := fmt.Sprintf("%s/%s", GATEWAY, reqPath)
+	requestUri := c.requestUri(reqPath)
 	debug.DebugPrintPostMapRequest(requestUri, values)
 	response, err := c.Post(requestUri, "application/x-www-form-urlencoded; charset=UTF-8", strings.NewReader(values.Encode()))
 	if err != nil {
 		return err
 	}
 	defer response.Body.Close()
+	if resp == nil {
+		resp = new(BaseResponse)
+	}
 	err = debug.DecodeJSONHttpResponse(response.Body, resp)
 	if err != nil {
 		return err
@@ -66,8 +71,24 @@ func (c *Client) Do(req Request, accessToken string, resp Response) error {
 	return nil
 }
 
+func (c *Client) requestUri(reqPath string) string {
+	builder := GetStringsBuilder()
+	defer PutStringsBuilder(builder)
+	builder.WriteString(GATEWAY)
+	builder.WriteString("/")
+	builder.WriteString(reqPath)
+	return builder.String()
+}
+
 func (c *Client) requestPath(req Request) string {
-	return fmt.Sprintf("%s/%s/%s", PROTOCOL, req.Path(), c.appKey)
+	builder := GetStringsBuilder()
+	defer PutStringsBuilder(builder)
+	builder.WriteString(PROTOCOL)
+	builder.WriteString("/")
+	builder.WriteString(req.Path())
+	builder.WriteString("/")
+	builder.WriteString(c.appKey)
+	return builder.String()
 }
 
 func (c *Client) combine(params map[string]string) string {
@@ -76,14 +97,20 @@ func (c *Client) combine(params map[string]string) string {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
-	var stringToBeSigned string
+	builder := GetStringsBuilder()
+	defer PutStringsBuilder(builder)
 	for _, k := range keys {
-		stringToBeSigned += k + params[k]
+		builder.WriteString(k)
+		builder.WriteString(params[k])
 	}
-	return stringToBeSigned
+	return builder.String()
 }
 
+// Sign sign api request
 func (c *Client) Sign(path string, params map[string]string) string {
-	raw := fmt.Sprintf("%s%s", path, c.combine(params))
-	return crypto.HmacSha1(c.secret, raw)
+	builder := GetBytesBuffer()
+	defer PutBytesBuffer(builder)
+	builder.WriteString(path)
+	builder.WriteString(c.combine(params))
+	return crypto.HmacSha1(c.secret, builder.Bytes())
 }

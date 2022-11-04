@@ -1,31 +1,38 @@
 package p4p
 
 import (
-	"errors"
+	"strconv"
 
 	"github.com/bububa/go1688"
 )
 
+// ListOfferDetailActivityRequest 获取所有可用营销活动列表(媒体选择要使用的最优活动) API Request
 type ListOfferDetailActivityRequest struct {
-	OfferId uint64 `json:"offerId"` // 商品id
+	// OfferID 商品id
+	OfferID uint64 `json:"offerId,omitempty"`
 }
 
-func (this *ListOfferDetailActivityRequest) Name() string {
+// Name implement RequestData interface
+func (r ListOfferDetailActivityRequest) Name() string {
 	return "alibaba.cps.listOfferDetailActivity"
 }
 
+// Map implement RequestData interface
+func (r ListOfferDetailActivityRequest) Map() map[string]string {
+	return map[string]string{
+		"offerId": strconv.FormatUint(r.OfferID, 10),
+	}
+}
+
+// ListOfferDetailActivity 获取所有可用营销活动列表(媒体选择要使用的最优活动)
 func ListOfferDetailActivity(client *go1688.Client, req *ListOfferDetailActivityRequest, accessToken string) (*UnionActivityOfferDetail, error) {
 	finalRequest := go1688.NewRequest(NAMESPACE, req)
-	resp := &QueryOfferDetailActivityResponse{}
-	err := client.Do(finalRequest, accessToken, resp)
-	if err != nil {
+	var resp QueryOfferDetailActivityResponse
+	if err := client.Do(finalRequest, accessToken, resp); err != nil {
 		return nil, err
 	}
-	if resp.IsError() {
-		return nil, resp
-	}
-	if resp.Result.Success {
-		return nil, errors.New(resp.Result.ErrorMsg)
+	if resp.Result.IsError() {
+		return nil, resp.Result
 	}
 	return resp.Result.Result, nil
 }

@@ -7,9 +7,10 @@ import (
 	"strings"
 )
 
-func HmacSha1(key []byte, message string) string {
+// HmacSha1 encode message with key with hmacsha1
+func HmacSha1(key []byte, message []byte) string {
 	h := hmac.New(sha1.New, key)
-	h.Write([]byte(message))
+	h.Write(message)
 	sha := h.Sum(nil)
 	return strings.ToUpper(hex.EncodeToString(sha))
 }

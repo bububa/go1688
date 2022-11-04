@@ -1,16 +1,20 @@
 package go1688
 
 import (
+	"bytes"
+	"encoding/json"
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 func structToMap(data interface{}) map[string]string {
-	m := make(map[string]string)
 	elem := reflect.ValueOf(data).Elem()
 	relType := elem.Type()
-	for i := 0; i < relType.NumField(); i++ {
+	totalFields := relType.NumField()
+	m := make(map[string]string, totalFields)
+	for i := 0; i < totalFields; i++ {
 		relField := relType.Field(i)
 		kind := relField.Type.Kind()
 		field := elem.Field(i)
@@ -46,4 +50,47 @@ func structToMap(data interface{}) map[string]string {
 		m[name] = val
 	}
 	return m
+}
+
+var stringsBuilderPool = sync.Pool{
+	New: func() any {
+		return new(strings.Builder)
+	},
+}
+
+func GetStringsBuilder() *strings.Builder {
+	builder := stringsBuilderPool.Get().(*strings.Builder)
+	builder.Reset()
+	return builder
+}
+
+func PutStringsBuilder(builder *strings.Builder) {
+	builder.Reset()
+	stringsBuilderPool.Put(builder)
+}
+
+var bytesBufferPool = sync.Pool{
+	New: func() any {
+		return new(bytes.Buffer)
+	},
+}
+
+func GetBytesBuffer() *bytes.Buffer {
+	buf := bytesBufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	return buf
+}
+
+func PutBytesBuffer(buf *bytes.Buffer) {
+	bytesBufferPool.Put(buf)
+}
+
+// JSONMarshal encode json without html escape
+func JSONMarshal(req interface{}) string {
+	buf := GetBytesBuffer()
+	defer PutBytesBuffer(buf)
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false)
+	encoder.Encode(req)
+	return buf.String()
 }

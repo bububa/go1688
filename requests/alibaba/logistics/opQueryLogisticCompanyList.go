@@ -4,37 +4,49 @@ import (
 	"github.com/bububa/go1688"
 )
 
-type OpQueryLogisticCompanyListRequest struct {
-}
+// OpQueryLogisticCompanyListRequest 物流公司列表-所有的物流公司
+type OpQueryLogisticCompanyListRequest struct{}
 
-func (this *OpQueryLogisticCompanyListRequest) Name() string {
+// Name implement RequestData interface
+func (r OpQueryLogisticCompanyListRequest) Name() string {
 	return "alibaba.logistics.OpQueryLogisticCompanyList"
 }
 
+// Map implement RequestData interface
+func (r OpQueryLogisticCompanyListRequest) Map() map[string]string {
+	ret := make(map[string]string)
+	return ret
+}
+
+// OpQueryLogisticCompanyListResponse 物流公司列表-所有的物流公司
 type OpQueryLogisticCompanyListResponse struct {
 	go1688.BaseResponse
-	Result          []*OpLogisticsCompany `json:"result,omitempty"`
-	ExtErrorMessage string                `json:"extErrorMessage,omitempty"`
+	// Result 物流公司列表
+	Result []OpLogisticsCompany `json:"result,omitempty"`
 }
 
+// OpLogisticsCompany 物流公司
 type OpLogisticsCompany struct {
-	Id           uint64 `json:"id,omitempty"`           // 订单编号
-	Name         string `json:"companyName,omitempty"`  // 物流公司名称
-	No           string `json:"companyNo,omitempty"`    // 物流公司编号
-	Phone        string `json:"companyPhone,omitempty"` // 物流公司服务电话
-	SupportPrint bool   `json:"supportPrint,omitempty"` // 是否支持打印
-	Spelling     string `json:"spelling,omitempty"`     // 全拼
+	// ID 订单编号
+	ID uint64 `json:"id,omitempty"`
+	// Name 物流公司名称
+	Name string `json:"companyName,omitempty"`
+	// No 物流公司编号
+	No string `json:"companyNo,omitempty"`
+	// Phone 物流公司服务电话
+	Phone string `json:"companyPhone,omitempty"`
+	// SupportPrint 是否支持打印
+	SupportPrint bool `json:"supportPrint,omitempty"`
+	// Spelling 全拼
+	Spelling string `json:"spelling,omitempty"`
 }
 
-func GetLogisticCompanyList(client *go1688.Client, accessToken string) ([]*OpLogisticsCompany, error) {
+// GetLogisticCompanyList 物流公司列表-所有的物流公司
+func GetLogisticCompanyList(client *go1688.Client, accessToken string) ([]OpLogisticsCompany, error) {
 	finalRequest := go1688.NewRequest(NAMESPACE, &OpQueryLogisticCompanyListRequest{})
-	resp := &OpQueryLogisticCompanyListResponse{}
-	err := client.Do(finalRequest, accessToken, resp)
-	if err != nil {
+	var resp OpQueryLogisticCompanyListResponse
+	if err := client.Do(finalRequest, accessToken, &resp); err != nil {
 		return nil, err
-	}
-	if resp.IsError() {
-		return nil, resp
 	}
 	return resp.Result, nil
 }
