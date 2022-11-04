@@ -38,7 +38,7 @@ type ReceiveAddress struct {
 	// AddressCodeText 地址区域编码对应的文本（包括国家，省，城市）
 	AddressCodeText string `json:"addressCodeText,omitempty"`
 	// AddressID .
-	AddressID uint64 `json:"addredssId,omitempty"`
+	AddressID uint64 `json:"addressId,omitempty"`
 	// BizType 记录收货地址的业务类型
 	BizType string `json:"bizType,omitempty"`
 	// IsDefault 是否为默认
