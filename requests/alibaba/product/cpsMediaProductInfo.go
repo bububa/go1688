@@ -3,8 +3,9 @@ package product
 import (
 	"strconv"
 
-	"github.com/bububa/go1688"
 	"github.com/shopspring/decimal"
+
+	"github.com/bububa/go1688"
 )
 
 // CpsMediaProductInfoRequest 获取商品详情接口 API Request

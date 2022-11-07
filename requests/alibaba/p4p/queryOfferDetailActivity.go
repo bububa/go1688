@@ -48,9 +48,9 @@ func (r QueryOfferDetailActivityResult) IsError() bool {
 func (r QueryOfferDetailActivityResult) Error() string {
 	builder := go1688.GetStringsBuilder()
 	defer go1688.PutStringsBuilder(builder)
-	builder.WriteString("CODE: ")
+	builder.WriteString("CODE:")
 	builder.WriteString(r.ErrorCode)
-	builder.WriteString(", MSG: ")
+	builder.WriteString(", MSG:")
 	builder.WriteString(r.ErrorMsg)
 	return builder.String()
 }

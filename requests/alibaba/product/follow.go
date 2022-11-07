@@ -60,7 +60,7 @@ func Follow(client *go1688.Client, req *FollowRequest, accessToken string) error
 		return err
 	}
 	if resp.BaseResponse.IsError() {
-		return resp
+		return resp.BaseResponse
 	}
 	return nil
 }

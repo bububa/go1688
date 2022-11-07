@@ -3,8 +3,9 @@ package trade
 import (
 	"strconv"
 
-	"github.com/bububa/go1688"
 	"github.com/shopspring/decimal"
+
+	"github.com/bububa/go1688"
 )
 
 // TradeGetBuyerViewRequest 订单详情查看(买家视角) API Request

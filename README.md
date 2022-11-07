@@ -9,7 +9,7 @@
 [![GitHub license](https://img.shields.io/github/license/bububa/go1688.svg)](https://github.com/bububa/go1688/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/bububa/go1688.svg)](https://GitHub.com/bububa/go1688/releases/)
 
-
+## Usage
 ```
 package main
 
