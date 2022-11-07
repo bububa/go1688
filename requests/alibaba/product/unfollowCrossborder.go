@@ -44,9 +44,9 @@ func (f UnfollowCrossborderResponse) Error() string {
 	}
 	builder := go1688.GetStringsBuilder()
 	defer go1688.PutStringsBuilder(builder)
-	builder.WriteString("CODE: ")
+	builder.WriteString("CODE:")
 	builder.WriteString(strconv.Itoa(f.Code))
-	builder.WriteString(", MESSAGE: ")
+	builder.WriteString(", MSG:")
 	builder.WriteString(f.Message)
 	return builder.String()
 }
@@ -59,7 +59,7 @@ func UnfollowCrossborder(client *go1688.Client, req *UnfollowCrossborderRequest,
 		return err
 	}
 	if resp.BaseResponse.IsError() {
-		return resp
+		return resp.BaseResponse
 	}
 	return nil
 }

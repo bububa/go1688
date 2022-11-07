@@ -12,24 +12,30 @@ type BaseResponse struct {
 	Success         bool   `json:"success,omitempty"`
 	InnerErrorCode  string `json:"errorCode,omitempty"`
 	InnerErrorMsg   string `json:"errorMsg,omitempty"`
+	ErrorInfo       string `json:"errorInfo,omitempty"`
 	ExtErrorMessage string `json:"extErrorMessage,omitempty"`
 }
 
 func (r BaseResponse) Error() string {
 	builder := GetStringsBuilder()
 	defer PutStringsBuilder(builder)
-	builder.WriteString("CODE: ")
+	var (
+		code = r.ErrorCode
+		msg  = r.ErrorMessage
+	)
 	if r.InnerErrorCode != "" {
-		builder.WriteString(r.InnerErrorCode)
-		builder.WriteString(", MSG: ")
-		builder.WriteString(r.InnerErrorMsg)
-	} else {
-		builder.WriteString(r.ErrorCode)
-		builder.WriteString(", MSG: ")
-		builder.WriteString(r.ErrorMessage)
+		code = r.InnerErrorCode
+		msg = r.InnerErrorMsg
+		if r.ErrorInfo != "" {
+			msg = r.ErrorInfo
+		}
 	}
+	builder.WriteString("CODE:")
+	builder.WriteString(code)
+	builder.WriteString("MSG:")
+	builder.WriteString(msg)
 	if r.ExtErrorMessage != "" {
-		builder.WriteString(", EXT: ")
+		builder.WriteString(", EXT:")
 		builder.WriteString(r.ExtErrorMessage)
 	}
 	return builder.String()

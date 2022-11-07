@@ -32,41 +32,8 @@ func (r OrderMemoAddRequest) Map() map[string]string {
 	return ret
 }
 
-// OrderMemoAddResponse 修改订单备忘
-type OrderMemoAddResponse struct {
-	go1688.BaseResponse
-	// ErrorCode 错误编码
-	ErrorCode string `json:"errorCode,omitempty"`
-	// ErrorMsg 错误信息
-	ErrorMsg string `json:"errorMsg,omitempty"`
-	// Success 是否成功
-	Success bool `json:"success,omitempty"`
-}
-
-// IsError check success
-func (r OrderMemoAddResponse) IsError() bool {
-	return !r.Success
-}
-
-func (r OrderMemoAddResponse) Error() string {
-	builder := go1688.GetStringsBuilder()
-	defer go1688.PutStringsBuilder(builder)
-	builder.WriteString("CODE: ")
-	builder.WriteString(r.ErrorCode)
-	builder.WriteString(", MSG: ")
-	builder.WriteString(r.ErrorMsg)
-	return builder.String()
-}
-
 // OrderMemoAdd 修改订单备忘
 func OrderMemoAdd(client *go1688.Client, req *OrderMemoAddRequest, accessToken string) error {
 	finalRequest := go1688.NewRequest(NAMESPACE, req)
-	var resp OrderMemoAddResponse
-	if err := client.Do(finalRequest, accessToken, &resp); err != nil {
-		return err
-	}
-	if resp.BaseResponse.IsError() {
-		return resp.BaseResponse
-	}
-	return nil
+	return client.Do(finalRequest, accessToken, nil)
 }

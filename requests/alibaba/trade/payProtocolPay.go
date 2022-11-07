@@ -31,8 +31,6 @@ type PayProtocolPayResponse struct {
 	Code string `json:"code,omitempty"`
 	// Message 结果的描述
 	Message string `json:"message,omitempty"`
-	// Success 是否成功
-	Success bool `json:"success,omitempty"`
 }
 
 // IsError check success
