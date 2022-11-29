@@ -62,7 +62,7 @@ func (r CreateOrder4CybMediaRequest) Map() map[string]string {
 // OuterOrderInfo 机构的订单信息
 type OuterOrderInfo struct {
 	// MediaOrderID 机构订单号
-	MediaOrderID uint64 `json:"mediaOrderId,omitempty"`
+	MediaOrderID string `json:"mediaOrderId,omitempty"`
 	// Phone 电话
 	Phone string `json:"phone,omitempty"`
 	// Offers

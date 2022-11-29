@@ -39,6 +39,10 @@ type OpLogisticsCompany struct {
 	SupportPrint bool `json:"supportPrint,omitempty"`
 	// Spelling 全拼
 	Spelling string `json:"spelling,omitempty"`
+	// GmtCreate 创建时间
+	GmtCreate go1688.JsonTime `json:"gmtCreate,omtiempty"`
+	// GmtModified 修改时间
+	GmtModified go1688.JsonTime `json:"gmtModified,omitempty"`
 }
 
 // GetLogisticCompanyList 物流公司列表-所有的物流公司

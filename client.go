@@ -1,6 +1,8 @@
 package go1688
 
 import (
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"sort"
@@ -20,7 +22,7 @@ const (
 
 // Client api client
 type Client struct {
-	http.Client
+	clt    *http.Client
 	appKey string
 	secret []byte
 }
@@ -32,7 +34,7 @@ func NewClient(appKey string, secret string, httpClient *http.Client) *Client {
 		client = http.DefaultClient
 	}
 	return &Client{
-		Client: *client,
+		clt:    client,
 		appKey: appKey,
 		secret: []byte(secret),
 	}
@@ -53,7 +55,58 @@ func (c *Client) Do(req Request, accessToken string, resp Response) error {
 	}
 	requestUri := c.requestUri(reqPath)
 	debug.DebugPrintPostMapRequest(requestUri, values)
-	response, err := c.Post(requestUri, "application/x-www-form-urlencoded; charset=UTF-8", strings.NewReader(values.Encode()))
+	response, err := c.clt.Post(requestUri, "application/x-www-form-urlencoded; charset=UTF-8", strings.NewReader(values.Encode()))
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	if resp == nil {
+		resp = new(BaseResponse)
+	}
+	err = debug.DecodeJSONHttpResponse(response.Body, resp)
+	if err != nil {
+		return err
+	}
+	if resp.IsError() {
+		return resp
+	}
+	return nil
+}
+
+// Do execute api request
+func (c *Client) Upload(req UploadRequest, accessToken string, resp Response) error {
+	reqPath := c.requestPath(req)
+	reqParams := req.Params()
+	reqParams["_aop_timestamp"] = strconv.FormatInt(time.Now().UnixNano()/1000000, 10)
+	if accessToken != "" {
+		reqParams["access_token"] = accessToken
+	}
+	reqParams["_aop_signature"] = c.Sign(reqPath, reqParams)
+	buf := GetBytesBuffer()
+	defer PutBytesBuffer(buf)
+	mw := multipart.NewWriter(buf)
+	for k, v := range reqParams {
+		if fw, err := mw.CreateFormField(k); err != nil {
+			return err
+		} else if _, err := io.Copy(fw, strings.NewReader(v)); err != nil {
+			return err
+		}
+	}
+	for k, r := range req.Files() {
+		if fw, err := mw.CreateFormFile(k, "file"); err != nil {
+			return err
+		} else if _, err := io.Copy(fw, r); err != nil {
+			return err
+		}
+	}
+	mw.Close()
+	requestUri := c.requestUri(reqPath)
+	httpReq, err := http.NewRequest("POST", requestUri, buf)
+	if err != nil {
+		return err
+	}
+	httpReq.Header.Add("Content-Type", mw.FormDataContentType())
+	response, err := c.clt.Do(httpReq)
 	if err != nil {
 		return err
 	}
