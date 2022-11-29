@@ -1,11 +1,18 @@
 package go1688
 
+import "io"
+
 type Request interface {
 	Namespace() string
 	Name() string
 	Version() string
 	Path() string
 	Params() map[string]string
+}
+
+type UploadRequest interface {
+	Request
+	Files() map[string]io.Reader
 }
 
 type BaseRequest struct {
@@ -70,4 +77,29 @@ func NewRequest(namespace string, data RequestData) *FinalRequest {
 
 func (r *FinalRequest) Params() map[string]string {
 	return r.data.Map()
+}
+
+type UploadRequestData interface {
+	RequestData
+	Files() map[string]io.Reader
+}
+
+type FinalUploadRequest struct {
+	BaseRequest
+	data UploadRequestData
+}
+
+func NewUploadRequest(namespace string, data UploadRequestData) *FinalUploadRequest {
+	return &FinalUploadRequest{
+		BaseRequest: NewBaseRequest(namespace, data.Name()),
+		data:        data,
+	}
+}
+
+func (r *FinalUploadRequest) Params() map[string]string {
+	return r.data.Map()
+}
+
+func (r *FinalUploadRequest) Files() map[string]io.Reader {
+	return r.data.Files()
 }
