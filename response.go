@@ -9,7 +9,7 @@ type BaseResponse struct {
 	ErrorCode       string `json:"error_code,omitempty"`
 	ErrorMessage    string `json:"error_message,omitempty"`
 	RequestId       string `json:"request_id,omitempty"`
-	Success         bool   `json:"success,omitempty"`
+	Success         Bool   `json:"success,omitempty"`
 	InnerErrorCode  string `json:"errorCode,omitempty"`
 	InnerErrorMsg   string `json:"errorMsg,omitempty"`
 	ErrorInfo       string `json:"errorInfo,omitempty"`
