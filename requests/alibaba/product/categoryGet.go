@@ -41,6 +41,8 @@ type CategoryInfo struct {
 	IsLeaf bool `json:"isLeaf,omitempty"`
 	// ParentIDs 父类目ID数组,1688只返回一个父id
 	ParentIDs []uint64 `json:"parentIDs,omitempty"`
+	// ChildIDs 子类目ID数组，1688无此内容
+	ChildIDs []uint64 `json:"childIDs,omitempty"`
 	// MinOrderQuality 最小起订量
 	MinOrderQuantity uint64 `json:"minOrderQuantity,omitempty"`
 	// ChildCategories 子类目信息
@@ -55,6 +57,10 @@ type ChildCategoryInfo struct {
 	ID uint64 `json:"id,omitempty"`
 	// Name 子类目名称
 	Name string `json:"name,omitempty"`
+	// IsLeaf 是否叶子类目（只有叶子类目才能发布商品）
+	IsLeaf bool `json:"isLeaf,omitempty"`
+	// CategoryType 类目的类型：1表示cbu类目，2表示gallop类目
+	CategoryType string `json:"categoryType,omitempty"`
 }
 
 // CategoryFeatureInfo 类目特征信息
