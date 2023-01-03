@@ -155,12 +155,7 @@ type SaleInfo struct {
 	// PriceAuth 是否价格私密信息
 	PriceAuth bool `json:"priceAuth,omitempty"`
 	// PriceRanges 区间价格。按数量范围设定的区间价格
-	PriceRanges []struct {
-		// StartQuantity 起批量
-		StartQuantity int64 `json:"startQuantity,omitempty"`
-		// Price 价格
-		Price decimal.Decimal `json:"price,omitempty"`
-	} `json:"priceRanges,omitempty"`
+	PriceRanges []ProductPriceRange `json:"priceRanges,omitempty"`
 	// AmountOnSale 可售数量
 	AmountOnSale float64 `json:"amountOnSale,omitempty"`
 	// Unit 计量单位
@@ -170,7 +165,7 @@ type SaleInfo struct {
 	// BatchNumber 每批数量，默认为空或者非零值，该属性不为空时sellunit为必填
 	BatchNumber int64 `json:"batchNumber,omitempty"`
 	// RetailPrice 建议零售价
-	RetailPrice decimal.Decimal `json:"retailPrice,omitempty"`
+	RetailPrice decimal.Decimal `json:"retailprice,omitempty"`
 	// SellUnit 售卖单位，如果为批量售卖，代表售卖的单位，该属性不为空时batchNumber为必填，例如1"手"=12“件"的"手"
 	SellUnit string `json:"sellunit,omitempty"`
 	// QuoteType 0-无SKU按数量报价,1-有SKU按规格报价,2-有SKU按数量报价
@@ -179,6 +174,14 @@ type SaleInfo struct {
 	ConsignPrice decimal.Decimal `json:"consignPrice,omitempty"`
 	// CpsSuggestPrice CPS建议价（单位：元）
 	CpsSuggestPrice decimal.Decimal `json:"cpsSuggestPrice,omitempty"`
+}
+
+// ProductPriceRange 区间价格。按数量范围设定的区间价格
+type ProductPriceRange struct {
+	// StartQuantity 起批量
+	StartQuantity int64 `json:"startQuantity,omitempty"`
+	// Price 价格
+	Price decimal.Decimal `json:"price,omitempty"`
 }
 
 // ShippingInfo 商品物流信息

@@ -22,7 +22,7 @@ type TradeGetBuyerViewRequest struct {
 
 // Name implement ReqeustData interface
 func (r TradeGetBuyerViewRequest) Name() string {
-	return "alibaba.trade.cancel"
+	return "alibaba.trade.get.buyerView"
 }
 
 // Map implement ReqeustData interface

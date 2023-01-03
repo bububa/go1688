@@ -51,3 +51,20 @@ func (t JsonTime) IsZero() bool {
 func (t JsonTime) Time() time.Time { return time.Time(t) }
 
 func (t JsonTime) String() string { return time.Time(t).String() }
+
+// Bool support string or bool for umarshal json
+type Bool bool
+
+func (b *Bool) UnmarshalJSON(s []byte) (err error) {
+	var val bool
+	str := string(s)
+	if str == `"true"` || str == "true" {
+		val = true
+	}
+	*b = Bool(val)
+	return
+}
+
+func (b Bool) Bool() bool {
+	return bool(b)
+}

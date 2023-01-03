@@ -35,7 +35,7 @@ type PayProtocolPayResponse struct {
 
 // IsError check success
 func (r PayProtocolPayResponse) IsError() bool {
-	return !r.Success
+	return !r.Success.Bool()
 }
 
 // Error implement error interface
