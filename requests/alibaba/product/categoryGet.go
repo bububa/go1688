@@ -28,7 +28,7 @@ func (r CategoryGetRequest) Map() map[string]string {
 type CategoryGetResponse struct {
 	go1688.BaseResponse
 	// Category 类目
-	Category *CategoryInfo `json:"categoryInfo,omitempty"`
+	Category []CategoryInfo `json:"categoryInfo,omitempty"`
 }
 
 // CategoryInfo 类目
@@ -76,7 +76,7 @@ type CategoryFeatureInfo struct {
 }
 
 // CategoryGet 根据类目Id查询类目
-func CategoryGet(client *go1688.Client, req *CategoryGetRequest, accessToken string) (*CategoryInfo, error) {
+func CategoryGet(client *go1688.Client, req *CategoryGetRequest, accessToken string) ([]CategoryInfo, error) {
 	finalRequest := go1688.NewRequest(NAMESPACE, req)
 	var resp CategoryGetResponse
 	if err := client.Do(finalRequest, accessToken, &resp); err != nil {
