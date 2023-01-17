@@ -144,6 +144,8 @@ type SkuInfo struct {
 	ConsignPrice decimal.Decimal `json:"consignPrice,omitempty"`
 	// CpsSuggestPrice CPS建议价（单位：元）
 	CpsSuggestPrice decimal.Decimal `json:"cpsSuggestPrice,omitempty"`
+	// ChannelPrice 厂货通渠道专享价（单位：元）
+	ChannelPrice decimal.Decimal `json:"channelPrice,omitempty"`
 }
 
 // SaleInfo 商品销售信息
@@ -174,6 +176,8 @@ type SaleInfo struct {
 	ConsignPrice decimal.Decimal `json:"consignPrice,omitempty"`
 	// CpsSuggestPrice CPS建议价（单位：元）
 	CpsSuggestPrice decimal.Decimal `json:"cpsSuggestPrice,omitempty"`
+	// ChannelPrice 厂货通渠道专享价（单位：元）
+	ChannelPrice decimal.Decimal `json:"channelPrice,omitempty"`
 }
 
 // ProductPriceRange 区间价格。按数量范围设定的区间价格
